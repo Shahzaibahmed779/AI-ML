@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heart Disease Risk Assessment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+      border-bottom: 3px solid #dc2626;
+      padding-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1e293b;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      color: #64748b;
+      font-weight: 400;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      background: #fef2f2;
+      color: #dc2626;
+      padding: 18px 24px;
+      margin: 35px -20px 25px -20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-left: 4px solid #dc2626;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 0.95rem;
+    }
+
+    .label-explanation {
+      font-weight: 400;
+      color: #64748b;
+      font-size: 0.92rem;
+      margin-left: 2px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background: white;
+      color: #1e293b;
+      cursor: pointer;
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23dc2626' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 16px;
+      padding-right: 50px;
+    }
+
+    select:focus,
+    input:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    select:hover {
+      border-color: #dc2626;
+    }
+
+    select option {
+      background: white;
+      color: #1e293b;
+      padding: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .submit-btn {
+      background: #dc2626;
+      color: white;
+      padding: 16px 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: block;
+      margin: 35px auto 0;
+      transition: all 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      background: #b91c1c;
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .loading {
+      text-align: center;
+      display: none;
+      padding: 30px;
+      color: #64748b;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #dc2626;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .results {
+      margin-top: 30px;
+      padding: 30px;
+      border-radius: 8px;
+      display: none;
+      background: white;
+      border: 1px solid #e2e8f0;
+    }
+
+    .results h3 {
+      margin-bottom: 25px;
+      font-size: 1.4rem;
+      text-align: center;
+      color: #1e293b;
+      font-weight: 700;
+    }
+
+    .result-item {
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .result-item strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .risk-detected {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+    }
+
+    .no-risk {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #059669;
+    }
+
+    .info-box {
+      background: white;
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 30px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .info-box h3 {
+      color: #1e293b;
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .info-box p {
+      color: #64748b;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(30, 41, 59, 0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .popup {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15), 0 1.5px 8px rgba(30, 41, 59, 0.08);
+      border: 2px solid #dc2626;
+      padding: 48px 36px 36px 36px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: popupIn 0.25s cubic-bezier(.4, 2, .6, 1) both;
+    }
+
+    @keyframes popupIn {
+      0% {
+        transform: scale(0.85) translateY(40px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .popup .popup-title {
+      color: #dc2626;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .popup .popup-message {
+      color: #1e293b;
+      font-size: 1.1rem;
+      margin-bottom: 28px;
+      font-weight: 500;
+    }
+
+    .popup .popup-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .popup .popup-btn:hover {
+      background: #b91c1c;
+    }
+
+    .align-label label {
+      min-height: 24px;
+      display: block;
+    }
+
+    .align-label .label-explanation {
+      margin-top: 6px;
+      font-size: 0.89rem;
+      color: #64748b;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 768px) {
+      .align-label label {
+        min-height: unset;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Heart Disease Risk Assessment</h1>
+    </div>
+    <div class="info-box" style="display:none;"></div>
+    <div class="form-container">
+      <form id="predictionForm">
+        <div class="section-title">Demographics</div>
+        <div class="form-row">
+          <div class="form-group align-label">
+            <label for="Gender">Gender</label>
+            <select id="Gender" name="Gender" required>
+              <option value="1">Male</option>
+              <option value="0">Female</option>
+            </select>
+          </div>
+          <div class="form-group align-label">
+            <label for="PhysicalActivities">Physical Activities</label>
+            <select id="PhysicalActivities" name="PhysicalActivities" required>
+              <option value="1">Yes</option>
+              <option value="0">No</option>
+            </select>
+          </div>
+          <div class="form-group align-label">
+            <label for="PhysicalHealthDays">Physical Health Days</label>
+            <select id="PhysicalHealthDays" name="PhysicalHealthDays" required>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+              <option value="21">21</option>
+              <option value="22">22</option>
+              <option value="23">23</option>
+              <option value="24">24</option>
+              <option value="25">25</option>
+              <option value="26">26</option>
+              <option value="27">27</option>
+              <option value="28">28</option>
+              <option value="29">29</option>
+              <option value="30">30</option>
+            </select>
+            <div class="label-explanation">(Number of days in the past 30 days when your physical health was not good. 0
+              = always good, 30 = always bad)</div>
+          </div>
+        </div>
+        <div class="section-title">Age Category</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Age Category</label>
+            <select id="ageCategory" onchange="updateAgeFields()">
+              <option value="25_29">Age 25 to 29</option>
+              <option value="30_34">Age 30 to 34</option>
+              <option value="35_39">Age 35 to 39</option>
+              <option value="40_44">Age 40 to 44</option>
+              <option value="45_49">Age 45 to 49</option>
+              <option value="50_54">Age 50 to 54</option>
+              <option value="55_59">Age 55 to 59</option>
+              <option value="60_64">Age 60 to 64</option>
+              <option value="65_69">Age 65 to 69</option>
+              <option value="70_74">Age 70 to 74</option>
+              <option value="75_79">Age 75 to 79</option>
+              <option value="80_plus">Age 80 or older</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="Age_25_29" name="Age_25_29" value="false" />
+        <input type="hidden" id="Age_30_34" name="Age_30_34" value="false" />
+        <input type="hidden" id="Age_35_39" name="Age_35_39" value="false" />
+        <input type="hidden" id="Age_40_44" name="Age_40_44" value="false" />
+        <input type="hidden" id="Age_45_49" name="Age_45_49" value="false" />
+        <input type="hidden" id="Age_50_54" name="Age_50_54" value="false" />
+        <input type="hidden" id="Age_55_59" name="Age_55_59" value="false" />
+        <input type="hidden" id="Age_60_64" name="Age_60_64" value="false" />
+        <input type="hidden" id="Age_65_69" name="Age_65_69" value="false" />
+        <input type="hidden" id="Age_70_74" name="Age_70_74" value="false" />
+        <input type="hidden" id="Age_75_79" name="Age_75_79" value="false" />
+        <input type="hidden" id="Age_80_plus" name="Age_80_plus" value="false" />
+        <div class="section-title">Medical History</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="HadAngina">Had Angina</label>
+            <select id="HadAngina" name="HadAngina" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="HadStroke">Had Stroke</label>
+            <select id="HadStroke" name="HadStroke" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="HadSkinCancer">Had Skin Cancer</label>
+            <select id="HadSkinCancer" name="HadSkinCancer" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="HadKidneyDisease">Had Kidney Disease</label>
+            <select id="HadKidneyDisease" name="HadKidneyDisease" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="HadArthritis">Had Arthritis</label>
+            <select id="HadArthritis" name="HadArthritis" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ChestScan">Had Chest Scan</label>
+            <select id="ChestScan" name="ChestScan" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div class="section-title">Functional Status</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="DeafOrHardOfHearing">Deaf or Hard of Hearing</label>
+            <select id="DeafOrHardOfHearing" name="DeafOrHardOfHearing" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="BlindOrVisionDifficulty">Blind or Vision Difficulty</label>
+            <select id="BlindOrVisionDifficulty" name="BlindOrVisionDifficulty" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="DifficultyConcentrating">Difficulty Concentrating</label>
+            <select id="DifficultyConcentrating" name="DifficultyConcentrating" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="DifficultyWalking">Difficulty Walking</label>
+            <select id="DifficultyWalking" name="DifficultyWalking" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="DifficultyDressingBathing">Difficulty Dressing or Bathing</label>
+            <select id="DifficultyDressingBathing" name="DifficultyDressingBathing" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div class="section-title">Health Status</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>General Health</label>
+            <select id="generalHealth" onchange="updateGeneralHealthFields()">
+              <option value="excellent">Excellent</option>
+              <option value="very_good">Very Good</option>
+              <option value="good">Good</option>
+              <option value="fair">Fair</option>
+              <option value="poor">Poor</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="GeneralHealth_Fair" name="GeneralHealth_Fair" value="false" />
+        <input type="hidden" id="GeneralHealth_Good" name="GeneralHealth_Good" value="false" />
+        <input type="hidden" id="GeneralHealth_Poor" name="GeneralHealth_Poor" value="false" />
+        <input type="hidden" id="GeneralHealth_Very_good" name="GeneralHealth_Very_good" value="false" />
+        <div class="section-title">Diabetes Status</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Diabetes</label>
+            <select id="diabetesStatus" onchange="updateDiabetesFields()">
+              <option value="no">No</option>
+              <option value="pre">Pre-diabetes or borderline</option>
+              <option value="yes">Yes</option>
+              <option value="pregnancy">Yes, but only during pregnancy</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="HadDiabetes_No" name="HadDiabetes_No" value="false" />
+        <input type="hidden" id="HadDiabetes_Yes" name="HadDiabetes_Yes" value="false" />
+        <input type="hidden" id="HadDiabetes_Pregnancy" name="HadDiabetes_Pregnancy" value="false" />
+        <div class="section-title">Lifestyle Factors</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Smoker Status</label>
+            <select id="smokerStatus" onchange="updateSmokerFields()">
+              <option value="never">Never smoked</option>
+              <option value="former">Former smoker</option>
+              <option value="current">Current smoker - some days</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>E-Cigarette Usage</label>
+            <select id="eCigStatus" onchange="updateECigFields()">
+              <option value="not_at_all">Not at all (right now)</option>
+              <option value="some_days">Some days</option>
+              <option value="every_day">Every day</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="AlcoholDrinkers">Alcohol Drinker</label>
+            <select id="AlcoholDrinkers" name="AlcoholDrinkers" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="Smoker_Never" name="Smoker_Never" value="false" />
+        <input type="hidden" id="Smoker_Former" name="Smoker_Former" value="false" />
+        <input type="hidden" id="Smoker_CurrentSomeDays" name="Smoker_CurrentSomeDays" value="false" />
+        <input type="hidden" id="ECig_NotAtAll" name="ECig_NotAtAll" value="false" />
+        <input type="hidden" id="ECig_SomeDays" name="ECig_SomeDays" value="false" />
+        <input type="hidden" id="ECig_EveryDay" name="ECig_EveryDay" value="false" />
+        <div class="section-title">Immunization & Testing</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="PneumoVaxEver">Had PneumoVax</label>
+            <select id="PneumoVaxEver" name="PneumoVaxEver" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>COVID-19 Status</label>
+            <select id="covidStatus" onchange="updateCovidFields()">
+              <option value="no">Never tested positive</option>
+              <option value="yes">Tested positive (with medical provider)</option>
+              <option value="home">Tested positive with home test</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="Covid_Yes" name="Covid_Yes" value="false" />
+        <input type="hidden" id="Covid_HomeTest" name="Covid_HomeTest" value="false" />
+        <button type="submit" class="submit-btn">Calculate Risk Assessment</button>
+      </form>
+    </div>
+  </div>
+  <div id="riskPopup" style="display:none;"></div>
+  <script>
+    // Initialize form fields
+    window.onload = function () {
+      updateAgeFields();
+      updateGeneralHealthFields();
+      updateDiabetesFields();
+      updateSmokerFields();
+      updateECigFields();
+      updateCovidFields();
+    };
+    function updateAgeFields() {
+      const selectedAge = document.getElementById("ageCategory").value;
+      document.querySelectorAll('[id^="Age_"]').forEach((field) => {
+        field.value = "false";
+      });
+      document.getElementById("Age_" + selectedAge).value = "true";
+    }
+    function updateGeneralHealthFields() {
+      const selected = document.getElementById("generalHealth").value;
+      document.getElementById("GeneralHealth_Fair").value = selected === "fair" ? "true" : "false";
+      document.getElementById("GeneralHealth_Good").value = selected === "good" ? "true" : "false";
+      document.getElementById("GeneralHealth_Poor").value = selected === "poor" ? "true" : "false";
+      document.getElementById("GeneralHealth_Very_good").value = selected === "very_good" ? "true" : "false";
+    }
+    function updateDiabetesFields() {
+      const selected = document.getElementById("diabetesStatus").value;
+      document.getElementById("HadDiabetes_No").value = selected === "pre" ? "true" : "false";
+      document.getElementById("HadDiabetes_Yes").value = selected === "yes" ? "true" : "false";
+      document.getElementById("HadDiabetes_Pregnancy").value = selected === "pregnancy" ? "true" : "false";
+    }
+    function updateSmokerFields() {
+      const selected = document.getElementById("smokerStatus").value;
+      document.getElementById("Smoker_Never").value = selected === "never" ? "true" : "false";
+      document.getElementById("Smoker_Former").value = selected === "former" ? "true" : "false";
+      document.getElementById("Smoker_CurrentSomeDays").value = selected === "current" ? "true" : "false";
+    }
+    function updateECigFields() {
+      const selected = document.getElementById("eCigStatus").value;
+      document.getElementById("ECig_NotAtAll").value = selected === "not_at_all" ? "true" : "false";
+      document.getElementById("ECig_SomeDays").value = selected === "some_days" ? "true" : "false";
+      document.getElementById("ECig_EveryDay").value = selected === "every_day" ? "true" : "false";
+    }
+    function updateCovidFields() {
+      const selected = document.getElementById("covidStatus").value;
+      document.getElementById("Covid_Yes").value = selected === "yes" ? "true" : "false";
+      document.getElementById("Covid_HomeTest").value = selected === "home" ? "true" : "false";
+    }
+    // Show popup with risk result (demo mode)
+    function showRiskPopup() {
+      const popup = document.getElementById('riskPopup');
+      popup.innerHTML = `
+        <div class="popup-overlay" onclick="closeRiskPopup(event)">
+          <div class="popup risk-detected" onclick="event.stopPropagation()">
+            <div class="popup-title">Elevated Cardiovascular Risk</div>
+            <div class="popup-message">Based on your responses, you may be at risk for heart disease. Please consult a healthcare professional for a full assessment.</div>
+            <button class="popup-btn" onclick="closeRiskPopup(event)">Close</button>
+          </div>
+        </div>
+      `;
+      popup.style.display = 'block';
+    }
+    function closeRiskPopup(event) {
+      event.preventDefault();
+      document.getElementById('riskPopup').style.display = 'none';
+    }
+    // Hijack form submit for demo
+    document.getElementById("predictionForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      showRiskPopup();
+    });
+  </script>
+</body>
+
+</html>
